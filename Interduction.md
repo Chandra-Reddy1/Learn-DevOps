@@ -172,3 +172,62 @@ These are not core but are critical in production environments.
 ## Interview One-Liner
 Kubernetes consists of control plane components that manage the cluster, node components that run workloads, and add-ons for networking, DNS, and storage.
 
+# Kubernetes Objects – Uses
+
+This document lists the **primary uses** of core Kubernetes objects.
+
+---
+
+## Container
+
+**Uses:**
+- Runs the application process
+- Packages application code with dependencies
+- Ensures consistency across environments (dev, test, prod)
+- Provides isolation between applications
+- Enables portability across systems
+
+---
+
+## Pod
+
+**Uses:**
+- Acts as the smallest deployable unit in Kubernetes
+- Groups one or more tightly coupled containers
+- Shares networking (IP address and ports) between containers
+- Shares storage volumes between containers
+- Manages container lifecycle together
+
+---
+
+## ReplicaSet
+
+**Uses:**
+- Ensures a specified number of pod replicas are always running
+- Provides high availability for applications
+- Automatically recreates pods if they crash or are deleted
+- Maintains application reliability
+- Supports horizontal scaling
+
+---
+
+## Deployment
+
+**Uses:**
+- Manages ReplicaSets and Pods declaratively
+- Enables rolling updates with zero or minimal downtime
+- Supports rollbacks to previous application versions
+- Scales applications up or down easily
+- Maintains application lifecycle in production environments
+
+---
+
+## Summary
+
+```text
+Container  → Runs the application
+Pod        → Groups containers
+ReplicaSet → Maintains pod count
+Deployment → Controls lifecycle and updates
+
+
