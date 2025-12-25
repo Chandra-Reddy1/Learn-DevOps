@@ -4,10 +4,10 @@
 
 ### Build an Image
 ```bash
-# Build from Dockerfile in current directory
+# Build from Dockerfile in current directory, -t Will define for tag
 docker build -t my-app:latest .
 
-# Build with a specific Dockerfile
+# Build with a specific Dockerfile, - for **Force**,**file**
 docker build -f Dockerfile.dev -t my-app:dev .
 
 # Build without cache
