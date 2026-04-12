@@ -2,6 +2,33 @@
 ### Complete Guide for DevOps Engineers
 
 ---
+Core Topics (Q1–Q39):
+
+Architecture (API server, etcd, scheduler, kubelet)
+Workloads — Pods, Deployments, StatefulSets, DaemonSets, CronJobs
+Networking — Services (ClusterIP/NodePort/LB), Ingress, NetworkPolicy, CoreDNS
+Storage — PV, PVC, StorageClass, access modes
+ConfigMaps, Secrets & injection methods
+Scheduling — HPA, VPA, Taints/Tolerations, Node/Pod Affinity
+RBAC, ServiceAccounts, PodSecurityAdmission
+Helm 2 vs 3, key commands
+Monitoring (Prometheus/Grafana) & Logging (EFK)
+GitOps with ArgoCD/Flux
+Cluster upgrades & etcd backup/restore
+
+12 Scenario-Based Questions covering:
+
+Pod stuck in Pending / CrashLoopBackOff
+Service not reachable
+Deployment rollout stuck
+Node NotReady
+High CPU/Memory troubleshooting
+Zero-downtime deployment strategy
+Multi-tenant resource isolation
+External secret management with Vault
+Production upgrade strategy
+ImagePullBackOff debug
+Liveness vs Readiness probe traps
 
 ## 📋 Table of Contents
 
