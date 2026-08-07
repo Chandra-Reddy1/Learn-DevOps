@@ -226,7 +226,557 @@ You still manage:
 ✅ CI/CD Deployment
 
 ---
+# EKS Workloads Explained with Real-Time Example
 
+Let's take a simple example:
+
+**You want to deploy a Banking Application in EKS.**
+
+```text
+Banking Application
+        │
+        ▼
+     Deployment
+        │
+        ▼
+       Pods
+        │
+        ▼
+     Service
+        │
+        ▼
+     Ingress
+        │
+        ▼
+      Users
+```
+
+---
+
+# 1. Application
+
+The actual software you want to run.
+
+Examples:
+
+- Banking App
+- E-commerce App
+- NGINX Website
+- Java Application
+- Python Flask App
+- NodeJS Application
+
+Example:
+
+```text
+Internet Banking Portal
+```
+
+Container Image:
+
+```text
+banking-app:v1
+```
+
+This is what customers use.
+
+---
+
+# 2. Pod
+
+A Pod is the smallest unit in Kubernetes.
+
+It contains the application container.
+
+Example:
+
+```text
+Pod-1
+ └── banking-app:v1
+
+Pod-2
+ └── banking-app:v1
+```
+
+Think of a Pod as:
+
+```text
+Container + Network + Storage
+```
+
+### Real Example
+
+1000 users access the banking application.
+
+One pod may become overloaded.
+
+Create more pods:
+
+```text
+Pod-1
+Pod-2
+Pod-3
+```
+
+Now traffic is shared.
+
+---
+
+# 3. Deployment
+
+Deployment manages Pods.
+
+Without Deployment:
+
+```text
+Manually Create Pods
+```
+
+If a Pod crashes:
+
+```text
+Pod Deleted
+   ↓
+Application Down
+```
+
+With Deployment:
+
+```text
+Deployment
+      ↓
+Maintains 3 Pods
+```
+
+If one pod crashes:
+
+```text
+Pod-2 Failed
+      ↓
+Deployment Detects
+      ↓
+Creates New Pod
+```
+
+Automatically.
+
+---
+
+## Banking Example
+
+```text
+Deployment: banking-app
+
+Desired Pods = 3
+```
+
+Running:
+
+```text
+Pod-1
+Pod-2
+Pod-3
+```
+
+Pod-2 crashes.
+
+Deployment automatically creates:
+
+```text
+Pod-1
+Pod-3
+Pod-4
+```
+
+Still 3 pods.
+
+---
+
+# 4. Service
+
+Problem:
+
+Pods get random IP addresses.
+
+Example:
+
+```text
+Pod-1 → 10.0.1.10
+Pod-2 → 10.0.1.11
+Pod-3 → 10.0.1.12
+```
+
+If Pod-2 dies:
+
+```text
+New Pod → 10.0.1.50
+```
+
+IP changes.
+
+Applications cannot depend on changing IPs.
+
+---
+
+## Solution: Service
+
+Service provides one stable endpoint.
+
+```text
+Service
+    │
+    ├── Pod-1
+    ├── Pod-2
+    └── Pod-3
+```
+
+Users talk to:
+
+```text
+banking-service
+```
+
+not individual Pods.
+
+---
+
+## Load Balancing
+
+Service distributes traffic.
+
+```text
+Request-1 → Pod-1
+Request-2 → Pod-2
+Request-3 → Pod-3
+```
+
+Traffic is balanced automatically.
+
+---
+
+# 5. Ingress
+
+Service works inside the cluster.
+
+But users are outside.
+
+Need internet access.
+
+---
+
+## Without Ingress
+
+```text
+User
+  ↓
+Load Balancer
+  ↓
+Service
+```
+
+Each application may need a separate load balancer.
+
+Expensive.
+
+---
+
+## With Ingress
+
+```text
+Internet
+     ↓
+Ingress
+ ┌───────────┬───────────┐
+ ↓           ↓
+Bank App    HR App
+ ↓           ↓
+Service     Service
+```
+
+Single entry point.
+
+---
+
+## Example
+
+User opens:
+
+```text
+bank.com
+```
+
+Ingress routes traffic:
+
+```text
+bank.com
+  ↓
+bank-service
+```
+
+Another URL:
+
+```text
+admin.bank.com
+```
+
+Ingress routes to:
+
+```text
+admin-service
+```
+
+---
+
+# 6. Storage
+
+Pods are temporary.
+
+If pod dies:
+
+```text
+Pod Deleted
+      ↓
+Data Lost
+```
+
+Not acceptable for databases.
+
+---
+
+## Example
+
+Customer uploads:
+
+```text
+loan_document.pdf
+```
+
+Stored inside pod.
+
+Pod crashes.
+
+```text
+Document Lost
+```
+
+Bad.
+
+---
+
+## Solution
+
+Use Storage.
+
+### EBS
+
+```text
+Pod
+ ↓
+PVC
+ ↓
+EBS Volume
+```
+
+File remains even if pod restarts.
+
+---
+
+## Example
+
+```text
+Customer Uploaded File
+       ↓
+Stored In EBS
+       ↓
+Pod Restarted
+       ↓
+File Still Exists
+```
+
+---
+
+# 7. Application Security
+
+Protects the application.
+
+---
+
+## Layer 1: IAM
+
+Controls who can access AWS resources.
+
+Example:
+
+```text
+Application
+    ↓
+S3 Bucket
+```
+
+Only authorized application can access S3.
+
+---
+
+## Layer 2: RBAC
+
+Controls Kubernetes permissions.
+
+Developer Team:
+
+```text
+View Pods
+```
+
+Admin Team:
+
+```text
+Create Pods
+Delete Pods
+Update Pods
+```
+
+Different permissions.
+
+---
+
+## Layer 3: Secrets
+
+Store passwords securely.
+
+Bad:
+
+```text
+DB_PASSWORD=admin123
+```
+
+inside application code.
+
+Good:
+
+```text
+Kubernetes Secret
+```
+
+Application reads secret securely.
+
+---
+
+## Layer 4: Network Policies
+
+Restrict communication.
+
+Example:
+
+```text
+Frontend
+    ↓
+Backend
+```
+
+Allowed.
+
+But:
+
+```text
+Unknown Pod
+      ↓
+Backend
+```
+
+Blocked.
+
+---
+
+# Complete Flow
+
+```text
+User
+ │
+ ▼
+Ingress
+ │
+ ▼
+Service
+ │
+ ▼
+Deployment
+ │
+ ▼
+Pods
+ │
+ ▼
+Storage (EBS/EFS)
+```
+
+---
+
+# Super Easy Interview Explanation
+
+## Application
+
+The software we deploy (Java, Python, NodeJS, NGINX).
+
+## Pod
+
+Smallest Kubernetes unit where the application runs.
+
+## Deployment
+
+Maintains desired number of Pods and performs updates.
+
+## Service
+
+Provides stable access and load balancing to Pods.
+
+## Ingress
+
+Exposes applications to external users through URLs.
+
+## Storage
+
+Persists data even if Pods are restarted.
+
+## Application Security
+
+Protects applications using IAM, RBAC, Secrets, and Network Policies.
+
+---
+
+# Real EKS Production Architecture
+
+```text
+Internet User
+      │
+      ▼
+AWS ALB (Ingress)
+      │
+      ▼
+Kubernetes Service
+      │
+      ▼
+Deployment
+      │
+      ▼
+Pods
+      │
+      ▼
+EBS / EFS Storage
+
+AWS Security:
+- IAM
+- RBAC
+- Secrets
+- Security Groups
+```
+
+### One-Line Memory Trick
+
+```text
+Application → Deployment → Pods → Service → Ingress → Users
+
+Storage → Saves Data
+Security → Protects Data
+```
 # Responsibility Split
 
 ## EKS + Managed Node Groups
