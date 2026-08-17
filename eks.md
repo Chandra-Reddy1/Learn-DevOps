@@ -48,6 +48,19 @@ IAM / Security
 | **Completed**                  | Container exited successfully                      | `kubectl get pod`               | Job/batch workload finished                   | Usually no action required                                                |
 | **Error**                      | Container exited unsuccessfully                    | `kubectl logs <pod>`            | Application/process failure                   | Check logs and exit code                                                  |
 
+| Priority | Issue                        | Remember                                     |
+| -------: | ---------------------------- | -------------------------------------------- |
+|        1 | **Pod can't reach internet** | Private subnet → NAT Gateway → IGW           |
+|        2 | **Pod DNS failure**          | CoreDNS / VPC DNS                            |
+|        3 | **Service has no endpoints** | Selector + labels + readiness                |
+|        4 | **ALB target unhealthy**     | Health path + port + SG + pod                |
+|        5 | **ALB 502**                  | Backend/port/connectivity                    |
+|        6 | **ALB 503**                  | No healthy targets                           |
+|        7 | **`FailedCreatePodSandBox`** | VPC CNI / pod IP allocation                  |
+|        8 | **Pod can't reach RDS**      | RDS SG + route + port + DNS                  |
+|        9 | **Connection timeout**       | Route/SG/NACL/firewall                       |
+|       10 | **Connection refused**       | Destination reachable, but nothing listening |
+
 | Network issue / error                             | What it means                                                            | First commands / checks                                                              | Common cause                                             | Resolution                                                               |
 | ------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------ |
 | **Pod can't reach internet**                      | Pod has no outbound connectivity                                         | `kubectl exec <pod> -- curl -I https://google.com`                                   | Missing NAT Gateway/route, SG/NACL, DNS                  | Check private subnet route → NAT Gateway → IGW, SG/NACL, DNS             |
