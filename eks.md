@@ -32,6 +32,22 @@ EKS / AWS networking
   ↓
 IAM / Security
 ```
+| Pod status / issue             | What it means                                      | First commands                  | Common cause                                  | Resolution                                                                |
+| ------------------------------ | -------------------------------------------------- | ------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------- |
+| **Pending**                    | Pod hasn't been scheduled                          | `kubectl describe pod <pod>`    | Not enough CPU/memory, taint, affinity, PVC   | Add node capacity, fix requests/limits, tolerations, affinity, or storage |
+| **ContainerCreating**          | Pod scheduled but container isn't ready            | `kubectl describe pod <pod>`    | Volume mount, CNI/networking, image pull      | Check Events, CNI, volumes, image                                         |
+| **Running but 0/1 Ready**      | Container runs but isn't ready for traffic         | `kubectl describe pod <pod>`    | Readiness probe failure                       | Fix readiness path/port/configuration                                     |
+| **CrashLoopBackOff**           | Container repeatedly crashes/restarts              | `kubectl logs <pod> --previous` | Application crash, bad config, liveness probe | Fix application/config/probe                                              |
+| **ImagePullBackOff**           | Kubernetes can't pull image                        | `kubectl describe pod <pod>`    | Wrong image/tag, ECR permissions, network     | Fix image/tag/IAM/network                                                 |
+| **ErrImagePull**               | Image pull failed                                  | `kubectl describe pod <pod>`    | Same as above                                 | Correct image or registry access                                          |
+| **CreateContainerConfigError** | Kubernetes can't construct container configuration | `kubectl describe pod <pod>`    | Missing Secret/ConfigMap/key                  | Create/fix Secret or ConfigMap reference                                  |
+| **CreateContainerError**       | Container couldn't be created                      | `kubectl describe pod <pod>`    | Bad command, mount/config/runtime issue       | Inspect Events and container configuration                                |
+| **OOMKilled**                  | Container exceeded memory limit                    | `kubectl describe pod <pod>`    | Memory limit too low or memory leak           | Increase limit appropriately and investigate application memory           |
+| **Evicted**                    | Kubelet removed pod from node                      | `kubectl describe pod <pod>`    | Disk/memory/PID pressure                      | Fix node resource pressure                                                |
+| **Terminating stuck**          | Pod doesn't finish deletion                        | `kubectl describe pod <pod>`    | Finalizer, volume, node issue                 | Inspect finalizers/events; remove finalizer only when safe                |
+| **Completed**                  | Container exited successfully                      | `kubectl get pod`               | Job/batch workload finished                   | Usually no action required                                                |
+| **Error**                      | Container exited unsuccessfully                    | `kubectl logs <pod>`            | Application/process failure                   | Check logs and exit code                                                  |
+
 
 ------------------------------------------------------------------------
 
