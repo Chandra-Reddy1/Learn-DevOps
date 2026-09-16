@@ -1,4 +1,5 @@
-EKS CLUSTER
+###
+###EKS CLUSTER
 │
 ├── CONTROL PLANE
 │   │
